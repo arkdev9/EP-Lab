@@ -1,0 +1,123 @@
+1.LOGIN.HTML
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LoginForm</title>
+</head>
+<body>
+<center>
+<form method="post" action="./Validate">
+User Name:<input type="text" name="username" /><br/>
+Password:<input type="password" name="password" /><br/>
+<input type="submit" value="login" />
+</form>
+</center>
+</body>
+</html>
+2.DATABASECONNECTION4.JAVA
+import java.sql.Connection; 
+import java.sql.DriverManager; 
+import java.sql.SQLException;  
+public class DatabaseConnection
+{ 
+    protected static Connection initializeDatabase()throws SQLException, ClassNotFoundException 
+    { 
+        String dbDriver = "com.mysql.cj.jdbc.Driver"; 
+        String dbURL = "jdbc:mysql://localhost:3306/";  
+        String dbName = "EPLABS"; 
+        String dbUsername = "root"; 
+        String dbPassword = "bindu@root"; 
+        Class.forName(dbDriver); 
+        Connection con = DriverManager.getConnection(dbURL + dbName, dbUsername,dbPassword); 
+        return con; 
+    } 
+} 
+3.CHECK.JAVA
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+public class Check
+{
+    public static boolean checkUser(String user,String pass) 
+    {
+        boolean st =false;
+        try {
+        	Connection con = DatabaseConnection.initializeDatabase();
+            PreparedStatement ps = con.prepareStatement("select * from 5inlab1b where username=? and password=?");
+            ps.setString(1, user);
+            ps.setString(2, pass);
+            ResultSet rs =ps.executeQuery();
+            st = rs.next();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return st;                 
+    }   
+}
+4.VALIDATE.JAVA
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+public class Validate extends HttpServlet 
+{
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException 
+    {
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        String user = request.getParameter("username");
+        String pass = request.getParameter("password");
+        if(Check.checkUser(user, pass))
+        {
+            RequestDispatcher rs = request.getRequestDispatcher("POSTLAB1");
+            rs.forward(request, response);
+        }
+        else
+        {
+           out.println("Username or Password incorrect");
+           RequestDispatcher rs = request.getRequestDispatcher("Login.html");
+           rs.include(request, response);
+        } 
+    }  
+}
+5.5POSTLAB1.JAVA
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection; 
+import java.sql.ResultSet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet; 
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest; 
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Statement; 
+@WebServlet("/POSTLAB1") 
+public class POSTLAB1 extends HttpServlet 
+{ 
+private static final long serialVersionUID = 1L;   
+protected void doPost(HttpServletRequest request,  HttpServletResponse response) 
+        throws ServletException, IOException 
+    { 
+	PrintWriter out = response.getWriter();  
+    response.setContentType("text/html");  
+    try 
+    {  
+    	Connection con = DatabaseConnection.initializeDatabase(); 
+        Statement stmt = con.createStatement();  
+        ResultSet rs = stmt.executeQuery("select * from 5inlab1b");   
+        while (rs.next()) 
+        {    
+            String s = rs.getString("feedback");   
+            out.println("FEEDBACK OF THE STDUENT IS:" + s );   
+        }   
+        con.close();  
+       }  
+        catch (Exception e) 
+       {  
+        out.println("error");  
+       } 
+    } 
+}

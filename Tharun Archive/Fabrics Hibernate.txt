@@ -1,0 +1,133 @@
+1.hibernate.cfg.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/EPLABS</property>
+<property name="hibernate.connection.username">root</property>
+<property name="hibernate.connection.password">bindu@root</property>
+<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+<property name="show_sql">true</property>
+<property name="format_sql">true</property>
+<property name="hbm2ddl.auto">update</property>
+<mapping resource="com/jwt/hibernate/Fabric.hbm.xml" />
+</session-factory>
+</hibernate-configuration>
+2.Fabric.hbm.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+   <class name="com.jwt.hibernate.Fabric" table="10postlab1">
+      <id column="ID" name="id" type="int"></id>
+      <property column="CLOTH_TYPE" name="type" type="string"></property>
+      <property column="CLOTH_COLOUR" name="color" type="string"></property>
+      <property column="CLOTH_AVAIL_LENGTH" name="length" type="double"></property>
+      <property column="COST_PER_METER" name="cost" type="double"></property>
+   </class>
+</hibernate-mapping>
+3.Fabric.java
+package com.jwt.hibernate;
+public class Fabric 
+{
+private int id;
+private String type;
+private String color;
+private double length;
+private double cost;
+public int getId() 
+{
+	return id;
+}
+public void setId(int id) 
+{
+	this.id = id;
+}
+public String getType() 
+{
+	return type;
+}
+public void setType(String type) 
+{
+	this.type = type;
+}
+public String getColor() 
+{
+	return color;
+}
+public void setColor(String color) 
+{
+	this.color = color;
+}
+public double getLength() 
+{
+	return length;
+}
+public void setLength(double length) 
+{
+	this.length = length;
+}
+public double getCost() 
+{
+	return cost;
+}
+public void setCost(double cost) 
+{
+	this.cost = cost;
+}
+}
+4.FabricInsert.java
+package com.jwt.hibernate;
+import java.util.List;
+import java.util.Scanner;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+public class FabricInsert 
+{
+	public static void main(String[] args) 
+	{
+		Scanner sc=new Scanner(System.in);
+		Configuration cfg=new Configuration();
+		cfg.configure();
+		SessionFactory sf=cfg.buildSessionFactory();
+		Session s=sf.openSession();
+		System.out.println("Enter yes/no");
+		String choice=sc.next();
+		while(choice.equals("yes"))
+		{
+		Fabric rm=new Fabric();
+		System.out.println("Enter id of the cloth:");
+		int id=sc.nextInt();
+		rm.setId(id);
+		System.out.println("Enter type of the cloth:");
+		String type=sc.next();
+		rm.setType(type);
+		System.out.println("Enter color of the cloth:");
+		String color=sc.next();
+		rm.setColor(color);
+		System.out.println("Enter available length of the cloth:");
+		double length=sc.nextDouble();
+		rm.setLength(length);
+		System.out.println("Enter the cost per meter:");
+		double cost=sc.nextDouble();
+		rm.setCost(cost);
+		s.save(rm);
+		s.beginTransaction().commit();
+		System.out.println("Enter yes/no");
+		choice=sc.next();
+		}
+		if(choice.equals("no"))
+		{
+		Query q=s.createQuery("from Fabric");
+		List<Fabric> l = q.list();
+		for(Fabric rm1:l)
+		{
+		System.out.println(rm1);
+		}
+		}
+	}
+}

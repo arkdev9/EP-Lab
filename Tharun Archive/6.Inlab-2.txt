@@ -1,0 +1,105 @@
+Servlet1.java
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+public class Servlet1 extends HttpServlet
+{
+   public void service(HttpServletRequest req,HttpServletResponse res) throws IOException,ServletException
+    {
+      PrintWriter out=res.getWriter();
+        String password=req.getParameter("pwd");
+	int num=0,low=0,upp=0;
+	for(int i=0;i<password.length();i++)
+	{
+	if(password.charAt(i)>='A' && password.charAt(i)<='Z')
+	upp=upp+1;
+	if(password.charAt(i)>='a' && password.charAt(i)<='z')
+	low=low+1;
+	if(Character.isDigit(password.charAt(i)))
+	num=num+1;
+	}
+	if( low==password.length()){
+	RequestDispatcher rd=req.getRequestDispatcher("Servlet2");
+	rd.forward(req,res);
+	}
+	else if(upp==password.length()){
+	RequestDispatcher rd=req.getRequestDispatcher("Servlet3");
+	rd.forward(req,res);
+	}
+	else if(num==password.length()){
+	RequestDispatcher rd=req.getRequestDispatcher("Servlet4");
+	rd.include(req,res);
+	}
+       else if(upp+low+num==password.length())
+	{
+	out.println("Strong password");
+	}
+	else
+	out.println("<p>The Password Must Contain An Uppercase,Lowercase And A Number In It!!<p>");
+		
+	out.close();
+    }
+}
+
+Servlet2.java
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.sql.*;
+public class Servlet2 extends HttpServlet
+{
+   public void service(HttpServletRequest req,HttpServletResponse res) throws IOException,ServletException
+    {
+      PrintWriter out=res.getWriter();
+	out.println("<p>The Password Must Contain Atleast One Uppercase And A Number In It In It!!<p>");
+out.close();
+}
+}
+
+Servlet3.java
+import javax.servlet.*;
+import java.io.*;
+import java.sql.*;
+import javax.servlet.http.*;
+public class Servlet3 extends HttpServlet
+{
+   public void service(HttpServletRequest req,HttpServletResponse res) throws IOException,ServletException
+    {
+      PrintWriter out=res.getWriter();
+	out.println("<p>The Password Must Contain Atleast One Lowercase And A Number In It In It!!<p>");
+out.close();
+}
+}
+
+Servlet4.java
+import javax.servlet.*;
+import java.io.*;
+import java.sql.*;
+import javax.servlet.http.*;
+public class Servlet4 extends HttpServlet
+{
+   public void service(HttpServletRequest req,HttpServletResponse res) throws IOException,ServletException
+    {
+      PrintWriter out=res.getWriter();
+	out.println("<p>The Password is very weak!!<p>");
+out.close();
+}
+}
+
+index.html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<center>
+<form action="Servlet1">
+Enter Password<input type="text" name="pwd"/></br>
+<input type="submit" value="submit"/>
+</center>
+</body>
+</html>

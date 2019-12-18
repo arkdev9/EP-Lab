@@ -1,0 +1,115 @@
+1.hibernate.cfg.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/EPLABS</property>
+<property name="hibernate.connection.username">root</property>
+<property name="hibernate.connection.password">bindu@root</property>
+<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+<property name="show_sql">true</property>
+<property name="format_sql">true</property>
+<property name="hbm2ddl.auto">update</property>
+<mapping resource="com/jwt/hibernate/RiceMill.hbm.xml" />
+</session-factory>
+</hibernate-configuration>
+2.RiceMill.hbm.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+   <class name="com.jwt.hibernate.RiceMill" table="10inlab1">
+      <id column="ID" name="id" type="int"></id>
+      <property column="PROPERTY" name="amount" type="double"></property>
+      <property column="COST" name="cost" type="double"></property>
+      <property column="TYPE" name="type" type="string"></property>
+   </class>
+</hibernate-mapping>
+3.RiceMill.java
+package com.jwt.hibernate;
+public class RiceMill {
+private int id;
+private double amount;
+private double cost;
+private String type;
+public int getId() {
+return id;
+}
+public void setId(int id) {
+this.id = id;
+}
+public double getAmount() {
+return amount;
+}
+public void setAmount(double amount) {
+this.amount = amount;
+}
+public double getCost() {
+return cost;
+}
+public void setCost(double cost) {
+this.cost = cost;
+}
+public String getType() {
+return type;
+}
+public void setType(String type) {
+this.type = type;
+}
+@Override
+public String toString() {
+return "RiceMill [id=" + id + ", amount=" + amount + ", cost=" + cost + ", type=" + type + "]";
+}
+}
+4.RiceMillTest.java
+package com.jwt.hibernate;
+import java.util.List;
+import java.util.Scanner;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+public class RiceMillTest 
+{
+	public static void main(String[] args) 
+	{
+		Scanner sc=new Scanner(System.in);
+		Configuration cfg=new Configuration();
+		cfg.configure();
+		SessionFactory sf=cfg.buildSessionFactory();
+		Session s=sf.openSession();
+		System.out.println("Enter yes/no");
+		String choice=sc.next();
+		while(choice.equals("yes"))
+		{
+		RiceMill rm=new RiceMill();
+		System.out.println("Enter id of the Bag");
+		int id=sc.nextInt();
+		rm.setId(id);
+		System.out.println("Enter amount of rice in the bag");
+		double amount=sc.nextDouble();
+		rm.setAmount(amount);
+		System.out.println("Enter cost of rice bag");
+		double cost=sc.nextDouble();
+		rm.setCost(cost);
+		System.out.println("Enter type of rice");
+		String type=sc.next();
+		rm.setType(type);
+		s.save(rm);
+		s.beginTransaction().commit();
+		System.out.println("Enter yes/no");
+		choice=sc.next();
+		}
+		if(choice.equals("no"))
+		{
+		Query q=s.createQuery("from RiceMill");
+		List<RiceMill> l=q.list();
+		for(RiceMill rm1:l)
+		{
+		System.out.println(rm1);
+		}
+		}
+	}
+}

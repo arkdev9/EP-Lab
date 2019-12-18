@@ -1,0 +1,45 @@
+inlab1
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.*;
+@WebServlet("/jquiz") 
+public class jquiz extends HttpServlet
+{
+	private static final long serialVersionUID = 1L; 
+public void doPost(HttpServletRequest req,HttpServletResponse res)throws ServletException,IOException
+{
+int c=0;
+res.setContentType("text/html");
+PrintWriter out=res.getWriter();
+out.println("");
+if((req.getParameter("T1")).equals("lucknow"))
+c++;
+if((req.getParameter("T2")).equals("srilanka"))
+c++;
+if((req.getParameter("T3")).equals("sydney"))
+c++;
+if((req.getParameter("r4")).equals("Greece"))
+c++;
+if((req.getParameter("r5")).equals("WestIndies"))
+c++;
+out.println(c+"Questions are correct");
+out.println("Score="+(c*5));
+out.println("thank u");
+out.println("");
+} }
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="./jquiz" method="post"> 
+1.Capital of Gujrat? : <input id="first"><br>
+2.Who won the worldcup cricket in 1996?: <input id="second"><br>
+<button onclick="submit">submit</button>
+</form>
+</body>
+</html>

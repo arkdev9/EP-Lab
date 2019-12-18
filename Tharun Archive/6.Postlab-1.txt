@@ -1,0 +1,127 @@
+import java.sql.Connection; 
+
+import java.sql.DriverManager; 
+
+import java.sql.SQLException;  
+
+public class DatabaseConnection
+
+{ 
+
+    protected static Connection initializeDatabase() 
+
+        throws SQLException, ClassNotFoundException 
+
+    { 
+
+        String dbDriver = "oracle.jdbc.driver.OracleDriver"; 
+
+        String dbURL = "jdbc:oracle:thin:@localhost:1523:xe";   
+
+        String dbUsername = "SYSTEM"; 
+
+        String dbPassword = "yashu"; 
+
+        Class.forName(dbDriver); 
+
+        Connection con = DriverManager.getConnection(dbURL, dbUsername,dbPassword); 
+
+        return con; 
+
+    } 
+
+
+} 
+
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class DemoServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	public void doGet(HttpServletRequest req,HttpServletResponse res)  
+			throws ServletException,IOException  
+			{  
+			res.setContentType("text/html");  
+			PrintWriter pw=res.getWriter();  
+			  
+			res.sendRedirect("http://www.google.com");  
+			  
+			pw.close();  
+}
+		
+}
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MySearcher extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	 protected void doGet(HttpServletRequest request, HttpServletResponse response)  
+	            throws ServletException, IOException 
+	 {  
+		 try
+			{
+			Connection con = DatabaseConnection.initializeDatabase(); 
+
+	        PreparedStatement st = con.prepareStatement("insert into google values(?)"); 
+
+	        st.setString(1, request.getParameter("string")); 
+
+	        st.executeUpdate(); 
+
+	        st.close(); 
+
+	        con.close();
+
+	        PrintWriter out = response.getWriter(); 
+
+	        out.println("<html><body><b>Successfully Inserted"+ "</b></body></html>"); 
+	        String name=request.getParameter("name");  
+	        response.sendRedirect("https://www.google.co.in/#q="+name);  
+	    }
+		 catch (Exception e) { 
+
+	            e.printStackTrace(); 
+
+	        } 
+		} 
+	}  
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="MySearcher"> 
+<p>String:</p>  
+
+        <input type="text" name="string"/> 
+
+        <br/><br/><br/> 
+
+        <input type="submit"/>  
+<input type="text" name="name">  
+<input type="submit" value="Google Search">  
+</form>  
+</body>
+</html>
